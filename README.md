@@ -6,8 +6,8 @@ scikit-learn, and Streamlit.
 
 ## Project status
 
-The data preparation, model comparison, and model export are complete. The Streamlit
-app is still in progress.
+The working MVP is complete: it prepares the data, compares two models, saves the
+Random Forest pipeline, and provides a Streamlit interface for predictions.
 
 ## Dataset
 
@@ -57,6 +57,7 @@ model, while documenting the comparison honestly.
 ## Project structure
 
 ```text
+app.py                   Streamlit prediction interface
 data/raw/              Downloaded CSV files (not committed)
 scripts/download_data.py
 scripts/inspect_data.py
@@ -101,12 +102,17 @@ pipeline ensures that the app uses the same vocabulary as the trained model.
 
 ## Running the app
 
-The Streamlit app has not been added yet. Once the model and app are ready, it will
-run with:
+Train the model first if `models/ticket_classifier.joblib` does not exist:
+
+```powershell
+python -m src.training
+```
+
+Then start the app:
 
 ```powershell
 streamlit run app.py
 ```
 
-The app will open in a browser, where you can enter a ticket description and receive
-a predicted category.
+Open the local address shown by Streamlit, usually `http://localhost:8501`. Enter a
+ticket description and select **Predict category** to see the model's result.
