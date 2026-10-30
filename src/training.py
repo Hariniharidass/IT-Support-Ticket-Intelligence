@@ -1,6 +1,7 @@
 """Train and evaluate a simple ticket classification baseline."""
 
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from sklearn.pipeline import Pipeline
@@ -8,8 +9,8 @@ from sklearn.pipeline import Pipeline
 from src.data import RANDOM_SEED, load_data, split_data
 
 
-def build_baseline():
-    """Create a TF-IDF and Logistic Regression pipeline."""
+def build_pipeline(classifier):
+    """Connect TF-IDF preprocessing to a classifier."""
     return Pipeline(
         [
             (
@@ -20,16 +21,29 @@ def build_baseline():
                     max_features=15_000,
                 ),
             ),
-            (
-                "classifier",
-                LogisticRegression(
-                    max_iter=1_000,
-                    class_weight="balanced",
-                    random_state=RANDOM_SEED,
-                ),
-            ),
+            ("classifier", classifier),
         ]
     )
+
+
+def build_models():
+    """Create the baseline and Random Forest pipelines."""
+    return {
+        "Logistic Regression": build_pipeline(
+            LogisticRegression(
+                max_iter=1_000,
+                class_weight="balanced",
+                random_state=RANDOM_SEED,
+            )
+        ),
+        "Random Forest": build_pipeline(
+            RandomForestClassifier(
+                n_estimators=300,
+                class_weight="balanced_subsample",
+                random_state=RANDOM_SEED,
+            )
+        ),
+    }
 
 
 def evaluate_model(y_true, y_pred):
@@ -53,16 +67,15 @@ def main():
     data = load_data()
     train_data, test_data = split_data(data)
 
-    model = build_baseline()
+    for model_name, model in build_models().items():
+        # fit() learns the TF-IDF vocabulary from training text only.
+        model.fit(train_data["text"], train_data["category_truth"])
+        predictions = model.predict(test_data["text"])
+        metrics = evaluate_model(test_data["category_truth"], predictions)
 
-    # fit() learns the TF-IDF vocabulary from training text only.
-    model.fit(train_data["text"], train_data["category_truth"])
-    predictions = model.predict(test_data["text"])
-    metrics = evaluate_model(test_data["category_truth"], predictions)
-
-    print("Logistic Regression baseline")
-    for name, value in metrics.items():
-        print(f"{name}: {value:.4f}")
+        print(f"\n{model_name}")
+        for name, value in metrics.items():
+            print(f"{name}: {value:.4f}")
 
 
 if __name__ == "__main__":

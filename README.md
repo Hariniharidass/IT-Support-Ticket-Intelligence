@@ -6,8 +6,8 @@ scikit-learn, and Streamlit.
 
 ## Project status
 
-The data download, inspection, train/test split, and baseline model are complete.
-Random Forest training and the Streamlit app are still in progress.
+The data preparation and model comparison are complete. Saving the model and building
+the Streamlit app are still in progress.
 
 ## Dataset
 
@@ -38,21 +38,21 @@ The current split has 1,816 training rows and 413 test rows, with no repeated te
 across the two sets. Only two EOL rows are in the test set, so results for that
 category will need to be interpreted carefully.
 
-## Baseline model
+## Model results
 
-The baseline is a scikit-learn pipeline with TF-IDF and Logistic Regression. Keeping
-both steps in one pipeline ensures that the TF-IDF vocabulary is learned from the
-training text only.
+Both models use the same TF-IDF settings and train/test split. Keeping TF-IDF and the
+classifier in one pipeline ensures that the vocabulary is learned from training text
+only.
 
-| Metric | Result |
-| --- | ---: |
-| Accuracy | 0.7458 |
-| Macro precision | 0.7108 |
-| Macro recall | 0.7606 |
-| Macro F1 | 0.7252 |
+| Model | Accuracy | Macro precision | Macro recall | Macro F1 |
+| --- | ---: | ---: | ---: | ---: |
+| Logistic Regression | 0.7458 | 0.7108 | **0.7606** | **0.7252** |
+| Random Forest | 0.7458 | **0.7451** | 0.6732 | 0.7009 |
 
-Macro metrics give every category equal importance, which is useful here because the
-dataset is imbalanced. These results are the reference point for the Random Forest.
+Random Forest has better macro precision, but Logistic Regression has better macro
+recall and macro F1. This shows why a more complex model is not automatically better.
+The project will still save Random Forest for the app because it is the requested
+model, while documenting the comparison honestly.
 
 ## Project structure
 
@@ -61,7 +61,7 @@ data/raw/              Downloaded CSV files (not committed)
 scripts/download_data.py
 scripts/inspect_data.py
 src/data.py            Data loading and train/test split
-src/training.py        TF-IDF and Logistic Regression baseline
+src/training.py        TF-IDF model training and comparison
 tests/
 requirements.txt
 requirements-dev.txt
@@ -82,7 +82,7 @@ python scripts/download_data.py
 python scripts/inspect_data.py
 ```
 
-Train and evaluate the current baseline:
+Train and evaluate both models:
 
 ```powershell
 python -m src.training
