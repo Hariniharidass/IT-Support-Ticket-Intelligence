@@ -6,8 +6,8 @@ scikit-learn, and Streamlit.
 
 ## Project status
 
-The data preparation and model comparison are complete. Saving the model and building
-the Streamlit app are still in progress.
+The data preparation, model comparison, and model export are complete. The Streamlit
+app is still in progress.
 
 ## Dataset
 
@@ -62,6 +62,8 @@ scripts/download_data.py
 scripts/inspect_data.py
 src/data.py            Data loading and train/test split
 src/training.py        TF-IDF model training and comparison
+models/                Generated model file (not committed)
+reports/               Generated confusion matrix (not committed)
 tests/
 requirements.txt
 requirements-dev.txt
@@ -87,6 +89,15 @@ Train and evaluate both models:
 ```powershell
 python -m src.training
 ```
+
+This command also creates:
+
+- `models/ticket_classifier.joblib`, containing the fitted TF-IDF and Random Forest
+  pipeline
+- `reports/confusion_matrix.png`, showing the Random Forest predictions by category
+
+Both files are generated locally and ignored by Git. Keeping TF-IDF inside the saved
+pipeline ensures that the app uses the same vocabulary as the trained model.
 
 ## Running the app
 

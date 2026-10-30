@@ -1,5 +1,13 @@
 """Train and evaluate a simple ticket classification baseline."""
 
+from pathlib import Path
+
+import joblib
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+from sklearn.metrics import ConfusionMatrixDisplay
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -7,6 +15,9 @@ from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from sklearn.pipeline import Pipeline
 
 from src.data import RANDOM_SEED, load_data, split_data
+
+MODEL_DIR = Path("models")
+REPORT_DIR = Path("reports")
 
 
 def build_pipeline(classifier):
@@ -63,6 +74,27 @@ def evaluate_model(y_true, y_pred):
     }
 
 
+def save_random_forest_outputs(model, y_true, y_pred):
+    """Save the fitted pipeline and its confusion matrix."""
+    MODEL_DIR.mkdir(exist_ok=True)
+    REPORT_DIR.mkdir(exist_ok=True)
+
+    joblib.dump(model, MODEL_DIR / "ticket_classifier.joblib")
+
+    figure, axis = plt.subplots(figsize=(10, 8))
+    ConfusionMatrixDisplay.from_predictions(
+        y_true,
+        y_pred,
+        xticks_rotation=45,
+        cmap="Blues",
+        ax=axis,
+    )
+    axis.set_title("Random Forest confusion matrix")
+    figure.tight_layout()
+    figure.savefig(REPORT_DIR / "confusion_matrix.png", dpi=150)
+    plt.close(figure)
+
+
 def main():
     data = load_data()
     train_data, test_data = split_data(data)
@@ -76,6 +108,14 @@ def main():
         print(f"\n{model_name}")
         for name, value in metrics.items():
             print(f"{name}: {value:.4f}")
+
+        if model_name == "Random Forest":
+            save_random_forest_outputs(
+                model,
+                test_data["category_truth"],
+                predictions,
+            )
+            print("Saved Random Forest model and confusion matrix")
 
 
 if __name__ == "__main__":
