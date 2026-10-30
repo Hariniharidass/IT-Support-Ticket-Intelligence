@@ -6,6 +6,7 @@ import joblib
 import streamlit as st
 
 MODEL_PATH = Path("models/ticket_classifier.joblib")
+LOW_CONFIDENCE_THRESHOLD = 0.50
 
 
 @st.cache_resource
@@ -32,7 +33,14 @@ ticket_text = st.text_area(
 if st.button("Predict category"):
     if ticket_text.strip():
         prediction = model.predict([ticket_text])[0]
+        probabilities = model.predict_proba([ticket_text])[0]
+        confidence = probabilities.max()
+
         st.success(f"Predicted category: {prediction}")
+        st.write(f"Confidence: {confidence:.1%}")
+
+        if confidence < LOW_CONFIDENCE_THRESHOLD:
+            st.warning("Low-confidence prediction — please review it manually.")
     else:
         st.warning("Enter a ticket description before predicting.")
 

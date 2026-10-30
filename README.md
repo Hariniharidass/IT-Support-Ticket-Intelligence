@@ -115,7 +115,8 @@ streamlit run app.py
 ```
 
 Open the local address shown by Streamlit, usually `http://localhost:8501`. Enter a
-ticket description and select **Predict category** to see the model's result.
+ticket description and select **Predict category** to see the model's result and
+confidence. Predictions below 50% confidence are marked for manual review.
 
 ## Tests
 
@@ -135,4 +136,6 @@ pipeline can accept ticket text and return a prediction.
 - The tickets come from one support environment and may not represent other companies.
 - The data is multilingual, but the models do not include language-specific handling.
 - Random Forest probabilities are not calibrated.
+- The confidence is useful for comparison but should not be treated as a guaranteed
+  probability of being correct.
 - This project is for learning and should not replace human ticket review.
