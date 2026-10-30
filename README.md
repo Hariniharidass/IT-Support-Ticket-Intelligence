@@ -6,8 +6,8 @@ scikit-learn, and Streamlit.
 
 ## Project status
 
-The data download, inspection, and train/test split are complete. Model training and
-the Streamlit app are still in progress.
+The data download, inspection, train/test split, and baseline model are complete.
+Random Forest training and the Streamlit app are still in progress.
 
 ## Dataset
 
@@ -38,6 +38,22 @@ The current split has 1,816 training rows and 413 test rows, with no repeated te
 across the two sets. Only two EOL rows are in the test set, so results for that
 category will need to be interpreted carefully.
 
+## Baseline model
+
+The baseline is a scikit-learn pipeline with TF-IDF and Logistic Regression. Keeping
+both steps in one pipeline ensures that the TF-IDF vocabulary is learned from the
+training text only.
+
+| Metric | Result |
+| --- | ---: |
+| Accuracy | 0.7458 |
+| Macro precision | 0.7108 |
+| Macro recall | 0.7606 |
+| Macro F1 | 0.7252 |
+
+Macro metrics give every category equal importance, which is useful here because the
+dataset is imbalanced. These results are the reference point for the Random Forest.
+
 ## Project structure
 
 ```text
@@ -45,6 +61,7 @@ data/raw/              Downloaded CSV files (not committed)
 scripts/download_data.py
 scripts/inspect_data.py
 src/data.py            Data loading and train/test split
+src/training.py        TF-IDF and Logistic Regression baseline
 tests/
 requirements.txt
 requirements-dev.txt
@@ -63,6 +80,12 @@ Download and inspect the dataset:
 ```powershell
 python scripts/download_data.py
 python scripts/inspect_data.py
+```
+
+Train and evaluate the current baseline:
+
+```powershell
+python -m src.training
 ```
 
 ## Running the app
