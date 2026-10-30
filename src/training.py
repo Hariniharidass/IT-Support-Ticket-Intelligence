@@ -3,11 +3,6 @@
 from pathlib import Path
 
 import joblib
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from sklearn.metrics import ConfusionMatrixDisplay
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -76,6 +71,12 @@ def evaluate_model(y_true, y_pred):
 
 def save_random_forest_outputs(model, y_true, y_pred):
     """Save the fitted pipeline and its confusion matrix."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from sklearn.metrics import ConfusionMatrixDisplay
+
     MODEL_DIR.mkdir(exist_ok=True)
     REPORT_DIR.mkdir(exist_ok=True)
 

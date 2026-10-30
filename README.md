@@ -65,7 +65,7 @@ src/data.py            Data loading and train/test split
 src/training.py        TF-IDF model training and comparison
 models/                Generated model file (not committed)
 reports/               Generated confusion matrix (not committed)
-tests/
+tests/test_project.py  Tests for splitting and the text pipeline
 requirements.txt
 requirements-dev.txt
 ```
@@ -116,3 +116,23 @@ streamlit run app.py
 
 Open the local address shown by Streamlit, usually `http://localhost:8501`. Enter a
 ticket description and select **Predict category** to see the model's result.
+
+## Tests
+
+Run the automated tests with:
+
+```powershell
+python -m pytest tests -q
+```
+
+The tests check text normalization, duplicate-safe splitting, and whether the TF-IDF
+pipeline can accept ticket text and return a prediction.
+
+## Limitations
+
+- The dataset is small, imbalanced, and contains many repeated descriptions.
+- EOL has only two unique descriptions, so its evaluation is not reliable.
+- The tickets come from one support environment and may not represent other companies.
+- The data is multilingual, but the models do not include language-specific handling.
+- Random Forest probabilities are not calibrated.
+- This project is for learning and should not replace human ticket review.
