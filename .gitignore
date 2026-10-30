@@ -225,3 +225,6 @@ models/*.joblib
 reports/*.json
 reports/*.csv
 reports/*.png
+
+# Personal project notes (local reference only)
+project_notes/
