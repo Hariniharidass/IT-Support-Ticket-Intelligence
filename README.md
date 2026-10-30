@@ -1,13 +1,13 @@
 # IT Support Ticket Intelligence
 
-This is a machine learning project for classifying IT support
-tickets from their descriptions. The final project will use TF-IDF, Random Forest,
-scikit-learn, and Streamlit.
+This project classifies IT support tickets from their descriptions. It was built as
+a small, beginner-friendly example of text classification using TF-IDF, scikit-learn,
+Random Forest, and Streamlit.
 
 ## Project status
 
-The working MVP is complete: it prepares the data, compares two models, saves the
-Random Forest pipeline, and provides a Streamlit interface for predictions.
+The MVP downloads and checks the data, compares two models, saves the fitted Random
+Forest pipeline, and provides a Streamlit page for trying predictions.
 
 ## Dataset
 
@@ -22,17 +22,17 @@ The Zenodo record does not state a dataset license, so the CSV files are not inc
 in this repository. Please review the record before downloading or using the data.
 The MIT license in this repository applies only to the project code.
 
-## What I found during inspection
+## Data inspection and splitting
 
 - There are no missing ticket descriptions or category labels.
 - The categories are imbalanced.
 - The original train and test files share 33 identical ticket descriptions.
 - The EOL category has 103 rows but only two unique descriptions.
 
-Using the original split could make the results look better because the model could
-see the same description during both training and testing. To avoid that, the files
-are combined and split again with `StratifiedGroupKFold`. Duplicate descriptions are
-kept on the same side of the split.
+The original split is not suitable for a fair evaluation because the model could see
+the same description during both training and testing. The four files are therefore
+combined and split again with `StratifiedGroupKFold`. Duplicate descriptions are kept
+on the same side of the split.
 
 The current split has 1,816 training rows and 413 test rows, with no repeated text
 across the two sets. Only two EOL rows are in the test set, so results for that
@@ -49,23 +49,22 @@ only.
 | Logistic Regression | 0.7458 | 0.7108 | **0.7606** | **0.7252** |
 | Random Forest | 0.7458 | **0.7451** | 0.6732 | 0.7009 |
 
-Random Forest has better macro precision, but Logistic Regression has better macro
-recall and macro F1. This shows why a more complex model is not automatically better.
-The project will still save Random Forest for the app because it is the requested
-model, while documenting the comparison honestly.
+Random Forest has better macro precision, while Logistic Regression has better macro
+recall and macro F1. The app uses Random Forest because that is the model this project
+set out to explore, but the baseline performed better on macro F1.
 
 ## Project structure
 
 ```text
-app.py                   Streamlit prediction interface
-data/raw/              Downloaded CSV files (not committed)
-scripts/download_data.py
-scripts/inspect_data.py
-src/data.py            Data loading and train/test split
-src/training.py        TF-IDF model training and comparison
-models/                Generated model file (not committed)
-reports/               Generated confusion matrix (not committed)
-tests/test_project.py  Tests for splitting and the text pipeline
+app.py                    Streamlit prediction interface
+data/raw/                 Downloaded CSV files (not committed)
+scripts/download_data.py  Dataset download script
+scripts/inspect_data.py   Dataset inspection script
+src/data.py               Data loading and train/test split
+src/training.py           Model training, evaluation, and export
+models/                   Generated model file (not committed)
+reports/                  Generated confusion matrix (not committed)
+tests/test_project.py     Tests for splitting and the text pipeline
 requirements.txt
 requirements-dev.txt
 ```
@@ -97,8 +96,8 @@ This command also creates:
   pipeline
 - `reports/confusion_matrix.png`, showing the Random Forest predictions by category
 
-Both files are generated locally and ignored by Git. Keeping TF-IDF inside the saved
-pipeline ensures that the app uses the same vocabulary as the trained model.
+Both files are generated locally and ignored by Git. TF-IDF is saved inside the
+pipeline, so the app always uses the same vocabulary as the trained model.
 
 ## Running the app
 
@@ -114,10 +113,10 @@ Then start the app:
 streamlit run app.py
 ```
 
-Open the local address shown by Streamlit, usually `http://localhost:8501`. Enter a
-ticket description and select **Predict category** to see the model's result and
-confidence. The page also shows all seven categories the model can predict.
-Predictions below 50% confidence are marked for manual review.
+Open the address shown by Streamlit, usually `http://localhost:8501`. The page lists
+the seven available categories. Enter a ticket description and select **Predict
+category** to see the prediction and confidence. Results below 50% confidence are
+marked for manual review.
 
 ## Tests
 
@@ -137,6 +136,6 @@ pipeline can accept ticket text and return a prediction.
 - The tickets come from one support environment and may not represent other companies.
 - The data is multilingual, but the models do not include language-specific handling.
 - Random Forest probabilities are not calibrated.
-- The confidence is useful for comparison but should not be treated as a guaranteed
-  probability of being correct.
+- The displayed confidence is useful as a warning signal, not as a guarantee that a
+  prediction is correct.
 - This project is for learning and should not replace human ticket review.
