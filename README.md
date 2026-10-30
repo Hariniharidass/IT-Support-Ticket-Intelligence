@@ -116,7 +116,8 @@ streamlit run app.py
 
 Open the local address shown by Streamlit, usually `http://localhost:8501`. Enter a
 ticket description and select **Predict category** to see the model's result and
-confidence. Predictions below 50% confidence are marked for manual review.
+confidence. The page also shows all seven categories the model can predict.
+Predictions below 50% confidence are marked for manual review.
 
 ## Tests
 

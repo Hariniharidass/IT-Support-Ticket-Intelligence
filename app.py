@@ -24,6 +24,8 @@ if not MODEL_PATH.exists():
 
 model = load_model()
 
+st.write("**Available categories:** " + ", ".join(model.classes_))
+
 ticket_text = st.text_area(
     "Ticket description",
     placeholder="Example: I cannot access the shared finance folder.",
